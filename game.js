@@ -1,128 +1,137 @@
-// NOTE: Do NOT add setup() or draw() in this file
-// setup() and draw() live in main.js
-// This file only defines:
-// 1) drawGame() → what the game screen looks like
-// 2) input handlers → what happens when the player clicks or presses keys
-// 3) helper functions specific to this screen
-
-// ------------------------------
-// Button data
-// ------------------------------
-// This object stores all the information needed to draw
-// and interact with the button on the game screen.
-// Keeping this in one object makes it easier to move,
-// resize, or restyle the button later.
-const gameBtn = {
-  x: 400, // x position (centre of the button)
-  y: 550, // y position (centre of the button)
-  w: 260, // width
-  h: 90, // height
-  label: "PRESS HERE", // text shown on the button
-};
-
-// ------------------------------
-// Main draw function for this screen
-// ------------------------------
-// drawGame() is called from main.js *only*
-// when currentScreen === "game"
 function drawGame() {
-  // Set background colour for the game screen
-  background(240, 230, 140);
+  background(20);
 
-  // ---- Title and instructions text ----
-  fill(0); // black text
-  textSize(32);
-  textAlign(CENTER, CENTER);
-  text("Game Screen", width / 2, 160);
+  // Show score
+  fill(255);
+  textAlign(LEFT);
+  textSize(20);
+  text("Score: " + score, 20, 30);
 
-  textSize(18);
-  text(
-    "Click the button (or press ENTER) for a random result.",
-    width / 2,
-    210,
-  );
+  // Update and show paddle
+  paddle.update();
+  paddle.show();
 
-  // ---- Draw the button ----
-  // We pass the button object to a helper function
-  drawGameButton(gameBtn);
+  // Update and show ball
+  ball.update();
+  ball.show();
+  ball.checkPaddle(paddle);
 
-  // ---- Cursor feedback ----
-  // If the mouse is over the button, show a hand cursor
-  // Otherwise, show the normal arrow cursor
-  cursor(isHover(gameBtn) ? HAND : ARROW);
-}
+  // Draw bricks and check collision
+  for (let i = 0; i < bricks.length; i++) {
+    if (!bricks[i].broken) {
+      bricks[i].show();
+      if (ball.checkBrick(bricks[i])) {
+        bricks[i].broken = true;
+        score += 10;
+      }
+    }
+  }
 
-// ------------------------------
-// Button drawing helper
-// ------------------------------
-// This function is responsible *only* for drawing the button.
-// It does NOT handle clicks or game logic.
-function drawGameButton({ x, y, w, h, label }) {
-  rectMode(CENTER);
+  // Lose condition: ball falls below canvas
+  if (ball.y - ball.r > height) {
+    currentScreen = "end";
+  }
 
-  // Check if the mouse is hovering over the button
-  // isHover() is defined in main.js so it can be shared
-  const hover = isHover({ x, y, w, h });
-
-  noStroke();
-
-  // Change button colour when hovered
-  // This gives visual feedback to the player
-  fill(
-    hover
-      ? color(180, 220, 255, 220) // lighter blue on hover
-      : color(200, 220, 255, 190), // normal state
-  );
-
-  // Draw the button rectangle
-  rect(x, y, w, h, 14); // last value = rounded corners
-
-  // Draw the button text
-  fill(0);
-  textSize(28);
-  textAlign(CENTER, CENTER);
-  text(label, x, y);
-}
-
-// ------------------------------
-// Mouse input for this screen
-// ------------------------------
-// This function is called from main.js
-// only when currentScreen === "game"
-function gameMousePressed() {
-  // Only trigger the outcome if the button is clicked
-  if (isHover(gameBtn)) {
-    triggerRandomOutcome();
+  // Win condition: all bricks broken
+  if (bricks.every((b) => b.broken)) {
+    currentScreen = "end";
   }
 }
 
-// ------------------------------
-// Keyboard input for this screen
-// ------------------------------
-// Allows keyboard-only interaction (accessibility + design)
-function gameKeyPressed() {
-  // ENTER key triggers the same behaviour as clicking the button
-  if (keyCode === ENTER) {
-    triggerRandomOutcome();
+// Paddle class
+class Paddle {
+  constructor() {
+    this.w = 120;
+    this.h = 20;
+    this.x = width / 2 - this.w / 2;
+    this.y = height - 40;
+  }
+
+  update() {
+    this.x = mouseX - this.w / 2;
+    this.x = constrain(this.x, 0, width - this.w);
+  }
+
+  show() {
+    fill(255);
+    rect(this.x, this.y, this.w, this.h, 10);
   }
 }
 
-// ------------------------------
-// Game logic: win or lose
-// ------------------------------
-// This function decides what happens next in the game.
-// It does NOT draw anything.
-function triggerRandomOutcome() {
-  // random() returns a value between 0 and 1
-  // Here we use a 50/50 chance:
-  // - less than 0.5 → win
-  // - 0.5 or greater → lose
-  //
-  // You can bias this later, for example:
-  // random() < 0.7 → 70% chance to win
-  if (random() < 0.5) {
-    currentScreen = "win";
-  } else {
-    currentScreen = "lose";
+// Ball class
+class Ball {
+  constructor() {
+    this.x = width / 2;
+    this.y = height / 2;
+    this.r = 15;
+    this.speedX = 5;
+    this.speedY = -5;
+  }
+
+  update() {
+    this.x += this.speedX;
+    this.y += this.speedY;
+
+    // Bounce off walls
+    if (this.x - this.r < 0 || this.x + this.r > width) this.speedX *= -1;
+    if (this.y - this.r < 0) this.speedY *= -1;
+  }
+
+  show() {
+    fill(200, 0, 255);
+    ellipse(this.x, this.y, this.r * 2);
+  }
+
+  checkPaddle(p) {
+    if (
+      this.x + this.r > p.x &&
+      this.x - this.r < p.x + p.w &&
+      this.y + this.r > p.y &&
+      this.y - this.r < p.y + p.h
+    ) {
+      this.speedY *= -1;
+      this.y = p.y - this.r; // prevent sticking
+    }
+  }
+
+  checkBrick(brick) {
+    if (
+      this.x + this.r > brick.x &&
+      this.x - this.r < brick.x + brick.w &&
+      this.y + this.r > brick.y &&
+      this.y - this.r < brick.y + brick.h
+    ) {
+      this.speedY *= -1;
+      return true;
+    }
+    return false;
+  }
+}
+
+// Brick class
+class Brick {
+  constructor(x, y, w, h) {
+    this.x = x;
+    this.y = y;
+    this.w = w;
+    this.h = h;
+    this.broken = false;
+  }
+
+  show() {
+    fill(0, 200, 200);
+    rect(this.x, this.y, this.w, this.h, 5);
+  }
+}
+
+// Create bricks
+function createBricks() {
+  bricks = [];
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      let x = c * brickWidth;
+      let y = r * brickHeight + 50;
+      bricks.push(new Brick(x, y, brickWidth - 5, brickHeight - 5));
+    }
   }
 }

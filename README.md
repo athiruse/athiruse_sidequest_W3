@@ -1,28 +1,30 @@
 ## Project Title
 
-GBDA302 Week 3 Example 1: Instructions Screen with Back button
+## Side Quest Week 3: Brick Breaker Game
 
----
+## Author
 
-## Authors
-
-Karen Cochrane and David Han
-
----
+## Anisha Thiruselvam
 
 ## Description
 
-This p5.js project demonstrates a simple multi-screen game structure using a state-based approach. The example includes a start screen, an instructions screen with a back button, a basic game screen, and win/lose outcome screens. The focus is on showing how to separate screens into different files, route input based on the current game state, and design simple UI elements such as buttons and keyboard controls.
+This p5.js project shows a simple multi-screen game called brick breaker made in the structure using a state-based approach. The game includes three main screen; start, game and end. Each are connected and can be accessed when the mouse is clicked on the button that then prompts to the next screen.
+
+---
+
+## Interaction Instructions
+
+Click the start button to start the game.
+Use your mouse to shift the paddle from side to side of the screen.
+To win, ensure the ball does not hit the bottom of the screen.
+When all bricks are broken or if you lose, the screen will change, prompting you to play again.
 
 ---
 
 ## Learning Goals
 
-- Understand how to manage multiple game states using a shared currentScreen variable
-- Practice separating code across multiple files for readability and maintenance
-- Implement clickable and keyboard-accessible UI buttons
-- Learn how to route draw(), mousePressed(), and keyPressed() logic based on the active screen
-- Build a basic instructions screen with a functional back button
+- Building a game using multiple game state using the shared currentScreen variable.
+- Learning how to make a game visually pleasing and have the game work without errors.
 
 ---
 
@@ -34,6 +36,4 @@ N/A
 
 ## GenAI
 
-The code was written by Dr. Karen Cochrane but she used GenAI to write the comments.
-
----
+## The code was written by GenAI but with some edits made by Anisha Thiruselvam.
