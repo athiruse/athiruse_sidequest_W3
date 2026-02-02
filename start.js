@@ -14,7 +14,7 @@ function generateStars() {
 function drawStart() {
   background(0); // black night sky
 
-  // Generate stars if they haven't been generated yet
+  // Generate stars
   if (stars.length === 0) {
     generateStars();
   }

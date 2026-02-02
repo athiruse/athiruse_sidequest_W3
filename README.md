@@ -1,10 +1,10 @@
 ## Project Title
 
-## Side Quest Week 3: Brick Breaker Game
+Side Quest Week 3: Brick Breaker Game
 
 ## Author
 
-## Anisha Thiruselvam
+Anisha Thiruselvam
 
 ## Description
 
@@ -36,4 +36,4 @@ N/A
 
 ## GenAI
 
-## The code was written by GenAI but with some edits made by Anisha Thiruselvam.
+The code was written by GenAI but with some edits made by Anisha Thiruselvam.
