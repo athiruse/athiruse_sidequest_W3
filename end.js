@@ -38,7 +38,6 @@ function drawEnd() {
   // Show final score
   textSize(22);
   text("Final Score: " + score, width / 2, 220);
-  text("So close... let's try once more", width / 2, 250);
 
   // Play Again button
   fill(40, 40, 128);
